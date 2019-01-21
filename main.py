@@ -6,9 +6,11 @@ from datetime import datetime
 import math
 import shutil
 
+# variables for holding file names and avg brightness
 avgBrightness = list()
 filenameList = list()
 
+# function to move the files in respective clusters
 def moveClustFiles(Clust):
     ### print(Clust)
 
@@ -25,6 +27,7 @@ def moveClustFiles(Clust):
 
     return
 
+# function to calculate new centroid location by averaging each cluster values
 def FindNewCentroid(lst):
     sum = 0
 
@@ -33,6 +36,7 @@ def FindNewCentroid(lst):
 
     return sum / len(lst)
 
+# function to do further k-means clustering
 def KMeansNext(m1, m2, m3, Clust):
     # calculate distance to centroid from each data points
     distTo_m1 = list()
@@ -69,7 +73,7 @@ def KMeansNext(m1, m2, m3, Clust):
 def main():
     # loop for every files in subfolder 'images'
     for filename in os.listdir(os.getcwd() + '/images'):
-        if filename.endswith('.jpg'):
+        if filename.endswith('.jpg') or filename.endswith('.png') or filename.endswith('.jpeg') or filename.endswith('.bmp'):
             # assign imagefile path into variable
             im_file = os.getcwd() + '/images/' + filename
 
@@ -85,8 +89,8 @@ def main():
         print('YOU MUST HAVE AT LEAST 3 IMAGES!')
         return
 
-    k = 3
-    random.seed(datetime.now())
+    # k = 3
+    # random.seed(datetime.now())
 
     # # choose centroid randomly
     # centroids = random.sample(range(0, len(avgBrightness)), k)
@@ -103,39 +107,7 @@ def main():
     m2 = avgBrightness[j*2-1]
     m3 = avgBrightness[j*3-1]
 
-    ### print(m1, m2, m3, j)
-
-    # calculate distance to centroid from each data points
-    distTo_m1 = list()
-    distTo_m2 = list()
-    distTo_m3 = list()
-
-    for i in range(len(avgBrightness)):
-        distTo_m1.append(math.sqrt((m1-avgBrightness[i])**2))
-        distTo_m2.append(math.sqrt((m2-avgBrightness[i])**2))
-        distTo_m3.append(math.sqrt((m3-avgBrightness[i])**2))
-
-    # label data points into clusters
-    clusters = [list(), list(), list()]
-
-    for i in range(len(avgBrightness)):
-        if distTo_m1[i] <= distTo_m2[i] and distTo_m1[i] <= distTo_m3[i]:
-            clusters[0].append(i)
-        elif distTo_m2[i] <= distTo_m1[i] and distTo_m2[i] <= distTo_m3[i]:
-            clusters[1].append(i)
-        elif distTo_m3[i] <= distTo_m2[i] and distTo_m3[i] <= distTo_m1[i]:
-            clusters[2].append(i)
-
-    ###print(clusters)
-
-    # find new centroids
-    m1 = FindNewCentroid(clusters[0])
-    m2 = FindNewCentroid(clusters[1])
-    m3 = FindNewCentroid(clusters[2])
-
-    ###print(m1, m2, m3)
-
-    KMeansNext(m1, m2, m3, clusters)
+    KMeansNext(m1, m2, m3, [[],[],[]])
 
 if __name__ == '__main__':
     main()
